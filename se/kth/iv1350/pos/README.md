@@ -86,41 +86,41 @@ to System.out is correct, just ignore testing methods that only produce output t
 System.out.
 
 
-#Receipt - Result
-Start Sale
-Add 1 item with item id abc123 :
-500g, whole grain oats, high fiber, gluten free
-Price: 29.90 SEK
-Total (incl VAT): 31.69 SEK
-
-Add 1 item with item id abc123 :
-500g, whole grain oats, high fiber, gluten free
-Price: 29.90 SEK
-Total (incl VAT): 63.39 SEK
-
-Add 1 item with item id def456 :
-240g, low sugar yoghurt, blueberry flavour
-Price: 14.90 SEK
-Total (incl VAT): 79.18 SEK
-
-Discount applied for customer CUST001: 0.00 SEK
-
-End sale :
-Total (incl VAT): 79.18 SEK
-
-Customer pays: 100.00 SEK
-
------ Begin receipt -----
-Time of Sale: 2025-05-04 19:02
-
-BigWheel Oatmeal 1 x 29.90 = 29.90 SEK
-BigWheel Oatmeal 1 x 29.90 = 29.90 SEK
-YouGoGo Blueberry 1 x 14.90 = 14.90 SEK
-
-Total: 79.18 SEK
-VAT:   4.48 SEK
-Cash:  100.00 SEK
-Change:20.82 SEK
------- End receipt ------
-
+# Receipt - Result
+Start Sale <br/>
+Add 1 item with item id abc123 :<br/>
+500g, whole grain oats, high fiber, gluten free<br/>
+Price: 29.90 SEK<br/>
+Total (incl VAT): 31.69 SEK<br/>
+<br/>
+Add 1 item with item id abc123 :<br/>
+500g, whole grain oats, high fiber, gluten free<br/>
+Price: 29.90 SEK<br/>
+Total (incl VAT): 63.39 SEK<br/>
+<br/>
+Add 1 item with item id def456 :<br/>
+240g, low sugar yoghurt, blueberry flavour<br/>
+Price: 14.90 SEK<br/>
+Total (incl VAT): 79.18 SEK<br/>
+<br/>
+Discount applied for customer CUST001: 0.00 SEK<br/>
+<br/>
+End sale :<br/>
+Total (incl VAT): 79.18 SEK<br/>
+<br/>
+Customer pays: 100.00 SEK<br/>
+<br/>
+----- Begin receipt -----<br/>
+Time of Sale: 2025-05-04 19:02<br/>
+<br/>
+BigWheel Oatmeal 1 x 29.90 = 29.90 SEK<br/>
+BigWheel Oatmeal 1 x 29.90 = 29.90 SEK<br/>
+YouGoGo Blueberry 1 x 14.90 = 14.90 SEK<br/>
+<br/>
+Total: 79.18 SEK<br/>
+VAT:   4.48 SEK<br/>
+Cash:  100.00 SEK<br/>
+Change:20.82 SEK<br/>
+------ End receipt ------<br/>
+<br/>
 Change to give the customer : 20.82 SEK
