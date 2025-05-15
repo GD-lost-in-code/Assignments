@@ -21,14 +21,11 @@ public class Controller {
     private final DiscountSystem discountSystem = new DiscountSystem();
     private final AccountingSystem accounting = new AccountingSystem();
     private Sale currentSale;
-    private double lastDiscountApplied;
-
     /**
      * Starts a brand-new sale session.
      */
     public void startSale() {
         currentSale = new Sale();
-        lastDiscountApplied = 0.0;
     }
 
     /**
@@ -37,7 +34,7 @@ public class Controller {
      * @param id the item identifier
      * @return success string with running total, or an error message if not found
      */
-    public String registerItem(String id) {
+    /*public String registerItem(String id) {
         ItemDTO itemInfo = inventory.findItem(id);
         if (itemInfo == null) {
             return "Error: invalid item identifier";
@@ -52,6 +49,16 @@ public class Controller {
         String priceLine = FormatUtil.formatMoney(itemInfo.getPrice());
         String totalLine = FormatUtil.totalLine(currentSale.getRunningTotal());
         return String.format("%s\nPrice: %s\n%s", desc, priceLine, totalLine);
+    }*/
+
+    public ItemDTO registerItem(String id){
+        ItemDTO itemInfo = inventory.findItem(id);
+        if (itemInfo == null){
+            return null;
+        }
+        Item item = new Item(itemInfo);
+        currentSale.addItem(item);
+        return itemInfo;
     }
 
     /**
@@ -61,17 +68,7 @@ public class Controller {
      * @return discount amount in SEK
      */
     public double requestDiscount(String customerId) {
-        List<Item> items = List.copyOf(currentSale.getItems().keySet());
-        double before      = currentSale.getRunningTotal();
-        double sumDisc     = discountSystem.getSumDiscount(items);
-        double rateTotal   = discountSystem.getTotalPercentDiscount(before);
-        double rateCust    = discountSystem.getPercentDiscountByCustomer(customerId);
-        double combinedRate = rateTotal + rateCust;
-        double percentDisc  = before * combinedRate;
-
-        lastDiscountApplied = sumDisc + percentDisc;
-        currentSale.applyDiscount(lastDiscountApplied);
-        return lastDiscountApplied;
+        return currentSale.applyDiscount(discountSystem,customerId);
     }
 
     /**
@@ -99,15 +96,6 @@ public class Controller {
     }
 
     /**
-     * Ends the sale, returning the total-line for display.
-     *
-     * @return the “Total (incl VAT): X SEK” line
-     */
-    public String endSale() {
-        return FormatUtil.totalLine(currentSale.getRunningTotal());
-    }
-
-    /**
      * Processes the cash payment, notifies external systems, and returns the receipt.
      *
      * @param amountPaid the cash amount provided by the customer
@@ -118,4 +106,28 @@ public class Controller {
         accounting.recordSale(saleDTO);
         return Receipt.format(currentSale, amountPaid);
     }
+
+    public String printReceipt(Receipt receipt) {
+        return Printer.format(receipt);
+    }
+    
+    /*private static void printItemInfo(ItemDTO item, Controller ctrl) {
+        if (item == null) {
+            System.out.println("Error: invalid item identifier");
+        } else {
+            System.out.println(item.getDescription());
+            System.out.println("Price: " + FormatUtil.formatMoney(item.getPrice()));
+            System.out.println(FormatUtil.totalLine(ctrl.getSaleInfo().getRunningTotal()));
+        }
+    }*/
+
+    /**
+     * Ends the sale, returning the total-line for display.
+     *
+     * @return the “Total (incl VAT): X SEK” line
+     */
+    public String endSale() {
+        return FormatUtil.totalLine(currentSale.getRunningTotal());
+    }
+
 }

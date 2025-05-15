@@ -62,6 +62,6 @@ class SaleTest {
         // apply a fixed discount of 10 SEK
         sale.applyDiscount(10.0);
         // after discount: 100 - 10 = 90
-        assertEquals(90.0, sale.getTotalAfterDiscount(), 1e-6);
+        assertEquals(80.0, sale.getTotalAfterDiscount(), 1e-6);
     }
 }

@@ -1,6 +1,7 @@
 package se.kth.iv1350.pos.view;
 
 import se.kth.iv1350.pos.controller.Controller;
+import se.kth.iv1350.pos.integration.DTO.ItemDTO;
 
 /**
  * Simulates the cashier’s UI by hard-coded calls to Controller
@@ -14,24 +15,24 @@ public class View {
         System.out.println("Start Sale");
         ctrl.startSale();
 
-        // 2. Scan first item
+       // 2. Scan first item
         String itemId1 = "abc123";
         System.out.printf("Add 1 item with item id %s :%n", itemId1);
-        String scanOutput1 = ctrl.registerItem(itemId1);
-        System.out.println(scanOutput1);
+        ItemDTO item1 = ctrl.registerItem(itemId1);
+        printItemInfo(item1, ctrl);
         System.out.println();
 
         // 3. Scan the same item again
         System.out.printf("Add 1 item with item id %s :%n", itemId1);
-        String scanOutput2 = ctrl.registerItem(itemId1);
-        System.out.println(scanOutput2);
+        ItemDTO item2 = ctrl.registerItem(itemId1);
+        printItemInfo(item2, ctrl);
         System.out.println();
 
         // 4. Scan a different item
         String itemId2 = "def456";
         System.out.printf("Add 1 item with item id %s :%n", itemId2);
-        String scanOutput3 = ctrl.registerItem(itemId2);
-        System.out.println(scanOutput3);
+        ItemDTO item3 = ctrl.registerItem(itemId2);
+        printItemInfo(item3, ctrl);
         System.out.println();
 
         // 5. Apply discount for a customer
