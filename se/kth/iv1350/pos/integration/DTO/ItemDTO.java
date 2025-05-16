@@ -30,6 +30,18 @@ package se.kth.iv1350.pos.integration.DTO;
         this.vatRate = vatRate;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ItemDTO)) return false;
+        return id.equals(((ItemDTO)o).id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
     /** @return the item identifier. */
     public String getId() { return id; }
 

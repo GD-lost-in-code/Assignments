@@ -1,37 +1,31 @@
 package se.kth.iv1350.pos.integration.DTO;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 public class SaleDTO {
-    private final List<ItemDTO> items;
+    private final LinkedHashMap<ItemDTO,Integer> itemsWithQty;
     private final double totalBeforeDiscount;
     private final double discountApplied;
     private final double totalAfterDiscount;
     private final double totalVat;
-    
-    /**
-     * @param items                  Item details list
-     * @param totalBeforeDiscount    Running total before discount
-     * @param discountApplied        Total discount applied
-     * @param totalAfterDiscount     Final total after discount
-     * @param totalVat               The total VAT amount
-     */
 
-    public SaleDTO(List<ItemDTO> items, 
-                    double totalBeforeDiscount, 
-                    double discountApplied, 
-                    double totalAfterDiscount, 
-                    double totalVat) {
-
-        this.items = items;
+    public SaleDTO(LinkedHashMap<ItemDTO,Integer> itemsWithQty,
+                   double totalBeforeDiscount,
+                   double discountApplied,
+                   double totalAfterDiscount,
+                   double totalVat) {
+        this.itemsWithQty        = new LinkedHashMap<>(itemsWithQty);
         this.totalBeforeDiscount = totalBeforeDiscount;
-        this.discountApplied = discountApplied;
-        this.totalAfterDiscount = totalAfterDiscount;
-        this.totalVat = totalVat;
+        this.discountApplied     = discountApplied;
+        this.totalAfterDiscount  = totalAfterDiscount;
+        this.totalVat            = totalVat;
     }
 
-    /** @return the item identifier. */
-    public List<ItemDTO> getItems() { return items; }
+    /** @return the itemDTO with quantity. */
+     public Map<ItemDTO,Integer> getItemsWithQty() {
+        return new LinkedHashMap<>(itemsWithQty);
+    }
 
     /** @return the item identifier. */
     public double getTotalBeforeDiscount() { return totalBeforeDiscount; }

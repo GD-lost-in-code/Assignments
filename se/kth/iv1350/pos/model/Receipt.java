@@ -1,43 +1,45 @@
 package se.kth.iv1350.pos.model;
 
-import se.kth.iv1350.pos.util.FormatUtil;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import se.kth.iv1350.pos.integration.DTO.ItemDTO;
+import se.kth.iv1350.pos.integration.DTO.SaleDTO;
 
 /**
- * Formats a completed Sale into a printable receipt string.
+ * Represents a completed sale and its associated receipt data.
  */
 public class Receipt {
-    private static final DateTimeFormatter TIMESTAMP_FORMAT =
-        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private final Map<ItemDTO, Integer> items;
+    private final double totalPrice;
+    private final double totalVAT;
+    private final double amountPaid;
+    private final double change;
 
-    /**
-     * Builds and returns the full receipt, including header, line items,
-     * totals, VAT, payment and change.
-     *
-     * @param sale       the completed sale
-     * @param amountPaid the cash amount provided by the customer
-     * @return the formatted receipt text
-     */
-    public static String format(Sale sale, double amountPaid) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("----- Begin receipt -----\n");
-        sb.append("Time of Sale: ")
-          .append(LocalDateTime.now().format(TIMESTAMP_FORMAT))
-          .append("\n\n");
+    public Receipt(SaleDTO sale, double amountPaid) {
+        this.items = sale.getItemsWithQty();
+        this.totalPrice = sale.getTotalAfterDiscount();
+        this.totalVAT = sale.getTotalVat();
+        this.amountPaid = amountPaid;
+        this.change = amountPaid - totalPrice;
+    }
 
-        sale.getItems().forEach((item, qty) -> {
-            double lineNet = item.getPrice() * qty;
-            sb.append(String.format("%s %d x %.2f = %.2f SEK\n",
-                    item.getName(), qty, item.getPrice(), lineNet));
-        });
+    public Map<ItemDTO, Integer> getItems() {
+        return new LinkedHashMap<>(items);
+    }
 
-        double total = sale.getRunningTotal();
-        sb.append("\nTotal: ").append(FormatUtil.formatMoney(total)).append("\n");
-        sb.append("VAT:   ").append(FormatUtil.formatMoney(sale.getTotalVat())).append("\n");
-        sb.append("Cash:  ").append(FormatUtil.formatMoney(amountPaid)).append("\n");
-        sb.append("Change:").append(FormatUtil.formatMoney(amountPaid - total)).append("\n");
-        sb.append("------ End receipt ------");
-        return sb.toString();
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public double getTotalVAT() {
+        return totalVAT;
+    }
+
+    public double getAmountPaid() {
+        return amountPaid;
+    }
+
+    public double getChange() {
+        return change;
     }
 }

@@ -2,37 +2,42 @@ package se.kth.iv1350.pos.view;
 
 import se.kth.iv1350.pos.controller.Controller;
 import se.kth.iv1350.pos.integration.DTO.ItemDTO;
+import se.kth.iv1350.pos.util.FormatUtil;
 
 /**
  * Simulates the cashier’s UI by hard-coded calls to Controller
  * and prints all relevant information to System.out.
  */
 public class View {
-    public static void main(String[] args) {
-        Controller ctrl = new Controller();
+    private final Controller ctrl;
 
+    public View(Controller ctrl) {
+        this.ctrl = ctrl;
+    }
+
+    public void Execution() {
         // 1. Start a new sale
         System.out.println("Start Sale");
         ctrl.startSale();
 
-       // 2. Scan first item
+        // 2. Scan first item
         String itemId1 = "abc123";
         System.out.printf("Add 1 item with item id %s :%n", itemId1);
         ItemDTO item1 = ctrl.registerItem(itemId1);
-        printItemInfo(item1, ctrl);
+        printItemInfo(item1);
         System.out.println();
 
         // 3. Scan the same item again
         System.out.printf("Add 1 item with item id %s :%n", itemId1);
         ItemDTO item2 = ctrl.registerItem(itemId1);
-        printItemInfo(item2, ctrl);
+        printItemInfo(item2);
         System.out.println();
 
         // 4. Scan a different item
         String itemId2 = "def456";
         System.out.printf("Add 1 item with item id %s :%n", itemId2);
         ItemDTO item3 = ctrl.registerItem(itemId2);
-        printItemInfo(item3, ctrl);
+        printItemInfo(item3);
         System.out.println();
 
         // 5. Apply discount for a customer
@@ -58,5 +63,15 @@ public class View {
         double change = amountPaid - 
             Double.parseDouble(totalLine.replaceAll("[^0-9.]", ""));
         System.out.printf("Change to give the customer : %.2f SEK%n", change);
+    }
+
+    private void printItemInfo(ItemDTO item) {
+        if (item == null) {
+            System.out.println("Error: invalid item identifier");
+        } else {
+            System.out.println(item.getDescription());
+            System.out.println("Price: " + FormatUtil.formatMoney(item.getPrice()));
+            System.out.println(FormatUtil.totalLine(ctrl.getSaleInfo().getTotalAfterDiscount()));
+        }
     }
 }
