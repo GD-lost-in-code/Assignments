@@ -1,3 +1,4 @@
+## Disclaimer a majority of the POS pogram has been built with AI assistance.
 # Semiar 4 information
 ## Task 1
 a. se exception(s) to handle alternative flow 3-4a in Process Sale, see document with

@@ -8,6 +8,7 @@ import se.kth.iv1350.posSem4.util.FormatUtil;
 
 public class View {
     private final Controller ctrl;
+    private final LocalFileLogger logger = new LocalFileLogger();
 
     public View(Controller ctrl) {
         this.ctrl = ctrl;
@@ -28,8 +29,10 @@ public class View {
                 printItemInfo(item);
             } catch (ItemNotFoundException e) {
                 System.out.println("Error: " + e.getMessage());
+                logger.logException("ItemNotFoundException during item registration", e);
             } catch (DatabaseFailureException e) {
                 System.out.println("Error: " + e.getMessage());
+                logger.logException("DatabaseFailureException during item registration", e);
             }
             System.out.println();
         };
