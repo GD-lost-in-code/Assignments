@@ -1,92 +1,67 @@
-# Semiar 1 information
-## Basic Flow
-1. Customer arrives at POS with goods to purchase.
-2. Cashier starts a new sale.
-3. Cashier enters item identifier.
-4. Program retrieves price, VAT (tax) rate, and item description from the external
-inventory system. Program records the sold item. Program also presents item
-description, price, and running total (including VAT).
-5. Steps three and four are repeated until the cashier has registered all items.
-6. Cashier asks customer if they want to buy anything more.
-7. Customer answers ’no’ (a ’yes’ answer is not considered in this scenario).
-8. Cashier ends the sale.
-9. Program presents total price, including VAT.
-10. Cashier tells customer the total, and asks for payment.
-11. Customer pays cash.
-12. Cashier enters amount paid
-13. Program sends sale information to external accounting system (for accounting)
-and external inventory system (to update inventory).
-14. Program increases the amount present in the register with the amount paid.
-15. Program prints receipt and tells how much change to give customer.
-16. Customer leaves with receipt and goods.
-
-## Alternative Flows
-3-4a. No item with the specified identifier is found.
-1. Program tells that identifier is invalid.
-3-4b. An item with the specified identifier has already been entered in the current sale.
-1. Program increases the sold quantity of the item, and presents item description,
-price, and running total.
-3-4c. Customer purchases multiple items of the same goods (with the same identifier),
-and cashier registers them together.
-1. Cashier enters item identifier.
-2. Cashier enters quantity
-3. Program calculates price, records the sold item and quantity, and presents item
-description, price, and running total.
-9a (may also be 10a or 11a) Customer says they are eligible for a discount.
-1. Cashier signals discount request.
-2. Cashier enters customer identification.
-3. Program fetches discount from the discount database, see Business Rules and Clar-
-ifications below.
-4. Program presents price after discount, based on discount rules. See Business Rules
-and Clarifications below for more details on discounts.
-
-## Business Rules and Clarifications
-Taxes/VAT The VAT mentioned in basic flow, bullets four and nine, is not included in
-the price stored in the external inventory system. It must instead be added before
-the total price is calculated. There are three different VAT rates: 25%, 12% and
-6%. Each item description in the item registry must contain information about
-that item’s VAT rate
-
-## Discounts 
-### The discounts mentioned in alternative flow 9a are calculated based on bought items, total cost for the entire sale, and customer id. A customer might be eligible for more than one type of discount. There’s already a database which contains information about all existing discounts, discount information must be fetched from this database. The discount database contains the following information:
-- When passed a list of all bought items, it tells a sum to be reduced from the
-total cost of the entire sale. The sum is zero if there’s no discount.
-- When passed the total cost of the entire sale, it tells a percentage to be
-reduced from this total cost. The percentage is zero if there’s no discount.
-- When passed the customer id, it tells a percentage to be reduced from the
-total cost of the entire sale. The percentage is zero if there’s no discount.
-
-# Seminar 3 information
+# Semiar 4 information
 ## Task 1
-### Write a program implementing the basic flow, the startup scenario, and the alternative flow 3-4b specified in the document with tasks for seminar one, which you designed in seminar two. You do not have to program any other alternative flows or add any other functionality. You are also not required to code the view, you may replace the user interface with one single class, View, which contains hard-coded calls to the controller. Neither is there any requirement on databases or external systems. Instead of a database, you can just store the data in the object in the integration layer, which should have been responsible for calling the database if there had been one. The external systems can simply be omitted, but there must be objects responsible for calling them. The solution must meet the following requirements:
+a. se exception(s) to handle alternative flow 3-4a in Process Sale, see document with
+tasks for seminar one. An exception shall be thrown to indicate that a search has
+been made for an identifier that did not exist in the inventory catalog
+b. Also use exception(s) to indicate that the database can not be called, it might be
+for example that the database server is simply not running. Since there is no real
+database, you must simulate this situation. That can be done by always throwing
+a database failure exception when a search is made for a particular, hardcoded,
+item identifier
 
-- The code shall be compilable and executable. You have to program in Java, since
-everyone must be able to understand your solution at the seminar. Also, don’t use
-exceptions now, since that’s a topic of seminar four, not understood by everyone
-now at seminar three.
-- If the user interface is replaced with hard-coded method calls, the class calling
-the controller must print everything that is returned by the controller. Also the receipt must be printed (to System.out).
-- Your code must follow all guidelines presented in chapter six in the text-
-book. Regarding comments this means there must be one comment for each public
-declaration.
-- Try to follow the design from seminar two, but it is perfectly OK to change the
-design if you discover flaws. The solution must however have high cohesion, low
-coupling and good encapsulation with a well-defined public interface.
+The bullets below from chapter eight about exception handling must be implemented.
+- Choose between checked and unchecked exceptions.
+- Use the correct abstraction level for exceptions.
+- Name the exception after the error condition.
+- Include information about the error condition.
+- Use functionality provided in java.lang.Exception
+- Write javadoc comments for all exceptions.
+- An object shall not change state if an exception is thrown.
+- Notify users.
+- Notify developers.
+- Write unit tests for the exception handling.
+
+The program shall produce the following output.
+
+- The user interface shall show an informative message when an exception is caught
+in the view. Apart from this, the grade is not affected no matter how simple or
+advanced the view is.
+- An error report shall be written to a log when an exception is caught, and that ex-
+ception indicates the program is not functioning as intended. This logging of errors
+shall be written to a file. How to print to a file is illustrated in se.leiflindback.
+oodbook.polymorphism.logapi.FileLogger, which can be found in listing 9.1 in the
+textbook and in the book’s git repository
 
 ## Task 2
-### Write tests for your program.
-- To pass (1 point) you must write unit tests for two classes. Try to find something
-more interesting to test than get/set methods. You have to write new test classes,
-you’re not allowed to use the given tests, that is AmountTest from the textbook and
-MainTest from the lecture Practice Programming and Unit Testing.
-- To pass with distinction (2 points) you must write unit tests for all classes in the
-layers controller, model, and integration, except classes that have just getters
-and constructors that only store values. It is also not required to test that output
-to System.out is correct, just ignore testing methods that only produce output to
-System.out.
+To get two points for this lab you must give good solutions to both parts a and b below.
+To get one point it is enough to solve only part a and not part b.
+### Part a
+In your Process Sale program, use the Observer pattern to implement a new function-
+ality, namely to show the sum of the costs for all sales made since the program started.
+This total income shall be handled by two new classes. The first, TotalRevenueView,
+shall be placed in the view and show the total income on the user interface, for ex-
+ample by printing to System.out. The second, TotalRevenueFileOutput, shall print
+the total income to a file. How to print to a file is illustrated in se.leiflindback.
+oodbook.polymorphism.logapi.FileLogger, which can be found in listing 9.1 in the text-
+book and in the book’s git repository. These two classes handling the total income shall
+never call the controller or any other class, but instead be updated using the Observer
+pattern. Both shall implement the same observer interface. The grade is not affected no
+matter how simple or advanced the view is.
 
+### Part b, only for 2 pts
+Use two more GoF patterns in your Process Sale program. You are free to choose any
+GoF patterns, apart from Observer and Template Method, since the former is used here
+in task 2a and the latter is used in Additional Higher Grade Tasks. You are allowed to
+choose GoF patterns not covered at the lectures. A suggestion for one of the patterns is
+to turn some registry/database into a singleton. Another suggestion is to use Strategy
+(maybe also Composite) for discount calculation.
+You are not allowed to copy entire files or classes from code samples written at the
+lectures, even if you understand it and/or change it. You are for example not allowed
+to use the logging example from the lecture on polymorphism, to implement the Strategy
+pattern. You are, however, allowed to write code very similar to code examples from
+lectures.
 
-# Receipt - Result
+# Output - Result
 Start Sale <br/>
 Add 1 item with item id abc123 :<br/>
 500g, whole grain oats, high fiber, gluten free<br/>
@@ -110,11 +85,11 @@ Total (incl VAT): 79.18 SEK<br/>
 <br/>
 Customer pays: 100.00 SEK<br/>
 <br/>
+[TotalRevenueView] Cumulative revenue: 79.182 SEK<br/>
 ----- Begin receipt -----<br/>
-Time of Sale: 2025-05-04 19:02<br/>
+Time of Sale: 2025-05-19 18:57<br/>
 <br/>
-BigWheel Oatmeal 1 x 29.90 = 29.90 SEK<br/>
-BigWheel Oatmeal 1 x 29.90 = 29.90 SEK<br/>
+BigWheel Oatmeal 2 x 29.90 = 59.80 SEK<br/>
 YouGoGo Blueberry 1 x 14.90 = 14.90 SEK<br/>
 <br/>
 Total: 79.18 SEK<br/>
