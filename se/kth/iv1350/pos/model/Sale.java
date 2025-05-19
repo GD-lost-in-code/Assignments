@@ -109,4 +109,9 @@ public class Sale {
         );
     }
 
+    public Object getCustomerID() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getCustomerID'");
+    }
+
 }

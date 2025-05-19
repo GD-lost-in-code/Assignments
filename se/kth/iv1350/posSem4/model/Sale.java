@@ -16,6 +16,7 @@ public class Sale {
     private double runningTotal = 0; // VAT inclussive
     private double itemDiscountTotal = 0;
     private double finalDiscountTotal = 0;
+    private String customerID;
     private final DiscountService discountHandler;
 
     public Sale(DiscountService discountHandler) {
@@ -87,6 +88,14 @@ public class Sale {
      */
     public double getDiscountApplied(){
         return finalDiscountTotal+itemDiscountTotal;
+    }
+
+    public void setCustomerID(String customerID) {
+        this.customerID = customerID;
+    }
+
+    public String getCustomerID() {
+        return customerID;
     }
 
     /**
