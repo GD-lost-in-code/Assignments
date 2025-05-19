@@ -1,27 +1,31 @@
 package se.kth.iv1350.posSem4.model;
 
-import se.kth.iv1350.pos.integration.DTO.ItemDTO;
-import se.kth.iv1350.pos.integration.DTO.SaleDTO;
+import se.kth.iv1350.posSem4.integration.DiscountService;
+import se.kth.iv1350.posSem4.integration.DTO.ItemDTO;
+import se.kth.iv1350.posSem4.integration.DTO.SaleDTO;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import se.kth.iv1350.pos.integration.DiscountService;
 
 /**
  * Accumulates items and quantities during a sale.
  */
 public class Sale {
     private final Map<ItemDTO,Integer> items = new LinkedHashMap<>();
-    private double runningTotal = 0; // VAT inclussive
+    private double runningTotal = 0; // VAT inclusive
     private double itemDiscountTotal = 0;
     private double finalDiscountTotal = 0;
     private String customerID;
-    private final DiscountService discountHandler;
+    private final DiscountService discountService;
 
-    public Sale(DiscountService discountHandler) {
-        this.discountHandler = discountHandler;
+    /**
+     * Creates a new Sale with its DiscountService.
+     * @param discountService is an object of the DiscountService class, allowing access to the multiple discounts
+     */
+    public Sale(DiscountService discountService) {
+        this.discountService = discountService;
     }
+
 
     /**
      * Registers one unit of the given item.
@@ -41,17 +45,15 @@ public class Sale {
     public void addItem(ItemDTO item, int quantity) {
         items.merge(item, quantity, Integer::sum);
 
-        // Correct per‑batch VAT calculation (no double‑count):
-        double net     = item.getPrice() * quantity;
-        double vat     = net * item.getVatRate();
-        double batch   = net + vat;
+        double net = item.getPrice() * quantity;
+        double vat = net * item.getVatRate();
+        double batch = net + vat;
+        runningTotal += batch;
 
-        runningTotal +=batch;
-
-        // Apply item-based discount immediately
-        double discount = discountHandler.applyItemDiscount(item, quantity);
-        itemDiscountTotal += discount;
-        runningTotal -= discount;
+        // Immediate item-based discount if any
+        double itemDiscount = 0; 
+        itemDiscountTotal += itemDiscount;
+        runningTotal -= itemDiscount;
     }
 
     /**
@@ -75,11 +77,9 @@ public class Sale {
             .mapToDouble(entry -> entry.getKey().getPrice() * entry.getValue() * entry.getKey().getVatRate()).sum();
     }
 
-    /**
-     * @param customerID --> customer identification
-     */
-    public void applyFinalDiscounts(String customerId) {
-        finalDiscountTotal = discountHandler.calculateFinalDiscount(items, runningTotal, customerId);
+
+    public void applyDiscounts() {
+        finalDiscountTotal = discountService.calculateDiscount(this);
         runningTotal -= finalDiscountTotal;
     }
 

@@ -1,18 +1,18 @@
 package se.kth.iv1350.posSem4.view;
 
-import se.kth.iv1350.pos.controller.Controller;
-import se.kth.iv1350.pos.integration.DTO.ItemDTO;
-import se.kth.iv1350.pos.util.FormatUtil;
+import se.kth.iv1350.posSem4.controller.Controller;
+import se.kth.iv1350.posSem4.integration.DTO.ItemDTO;
+import se.kth.iv1350.posSem4.integration.exception.DatabaseFailureException;
+import se.kth.iv1350.posSem4.integration.exception.ItemNotFoundException;
+import se.kth.iv1350.posSem4.util.FormatUtil;
 
-/**
- * Simulates the cashier’s UI by hard-coded calls to Controller
- * and prints all relevant information to System.out.
- */
 public class View {
     private final Controller ctrl;
 
     public View(Controller ctrl) {
         this.ctrl = ctrl;
+        ctrl.addObserver(new TotalRevenueView());
+        ctrl.addObserver(new TotalRevenueFileOutput());
     }
 
     public void Execution() {
@@ -20,25 +20,28 @@ public class View {
         System.out.println("Start Sale");
         ctrl.startSale();
 
+        // Utility to scan an item and handle exceptions
+        java.util.function.Consumer<String> scanItem = id -> {
+            System.out.printf("Add 1 item with item id %s :%n", id);
+            try {
+                ItemDTO item = ctrl.registerItem(id);
+                printItemInfo(item);
+            } catch (ItemNotFoundException e) {
+                System.out.println("Error: " + e.getMessage());
+            } catch (DatabaseFailureException e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+            System.out.println();
+        };
+
         // 2. Scan first item
-        String itemId1 = "abc123";
-        System.out.printf("Add 1 item with item id %s :%n", itemId1);
-        ItemDTO item1 = ctrl.registerItem(itemId1);
-        printItemInfo(item1);
-        System.out.println();
+        scanItem.accept("abc123");
 
         // 3. Scan the same item again
-        System.out.printf("Add 1 item with item id %s :%n", itemId1);
-        ItemDTO item2 = ctrl.registerItem(itemId1);
-        printItemInfo(item2);
-        System.out.println();
+        scanItem.accept("abc123");
 
         // 4. Scan a different item
-        String itemId2 = "def456";
-        System.out.printf("Add 1 item with item id %s :%n", itemId2);
-        ItemDTO item3 = ctrl.registerItem(itemId2);
-        printItemInfo(item3);
-        System.out.println();
+        scanItem.accept("def456");
 
         // 5. Apply discount for a customer
         String customerId = "CUST001";
@@ -60,18 +63,14 @@ public class View {
         System.out.println();
 
         // 8. Show change explicitly
-        double change = amountPaid - 
+        double change = amountPaid -
             Double.parseDouble(totalLine.replaceAll("[^0-9.]", ""));
         System.out.printf("Change to give the customer : %.2f SEK%n", change);
     }
 
     private void printItemInfo(ItemDTO item) {
-        if (item == null) {
-            System.out.println("Error: invalid item identifier");
-        } else {
-            System.out.println(item.getDescription());
-            System.out.println("Price: " + FormatUtil.formatMoney(item.getPrice()));
-            System.out.println(FormatUtil.totalLine(ctrl.getSaleInfo().getTotalAfterDiscount()));
-        }
+        System.out.println(item.getDescription());
+        System.out.println("Price: " + FormatUtil.formatMoney(item.getPrice()));
+        System.out.println(FormatUtil.totalLine(ctrl.getSaleInfo().getTotalAfterDiscount()));
     }
 }

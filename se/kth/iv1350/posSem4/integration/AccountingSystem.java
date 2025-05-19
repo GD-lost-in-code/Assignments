@@ -1,7 +1,7 @@
 package se.kth.iv1350.posSem4.integration;
 
 
-import se.kth.iv1350.pos.integration.DTO.SaleDTO;
+import se.kth.iv1350.posSem4.integration.DTO.SaleDTO;
 
 /**
  * Simulates an external accounting system; no real persistence.

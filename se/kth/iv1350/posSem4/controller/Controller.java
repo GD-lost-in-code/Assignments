@@ -1,27 +1,27 @@
 package se.kth.iv1350.posSem4.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-import se.kth.iv1350.pos.integration.AccountingSystem;
-import se.kth.iv1350.pos.integration.DiscountSystem;
-import se.kth.iv1350.pos.integration.DiscountService;
-import se.kth.iv1350.pos.integration.InventorySystem;
-import se.kth.iv1350.pos.integration.Printer;
-import se.kth.iv1350.pos.integration.DTO.ItemDTO;
-import se.kth.iv1350.pos.integration.DTO.SaleDTO;
-import se.kth.iv1350.pos.model.Receipt;
-import se.kth.iv1350.pos.model.Sale;
-import se.kth.iv1350.pos.util.FormatUtil;
+import se.kth.iv1350.posSem4.integration.AccountingSystem;
+import se.kth.iv1350.posSem4.integration.DiscountService;
+import se.kth.iv1350.posSem4.integration.InventorySystem;
+import se.kth.iv1350.posSem4.integration.Printer;
+import se.kth.iv1350.posSem4.integration.DTO.ItemDTO;
+import se.kth.iv1350.posSem4.integration.DTO.SaleDTO;
+import se.kth.iv1350.posSem4.integration.exception.DatabaseFailureException;
+import se.kth.iv1350.posSem4.integration.exception.ItemNotFoundException;
+import se.kth.iv1350.posSem4.model.Sale;
+import se.kth.iv1350.posSem4.util.FormatUtil;
 
 /**
  * Coordinates the point-of-sale use case: scanning, ending sale, and payment.
  */
 public class Controller {
-    private final InventorySystem inventory = new InventorySystem();
-    private final DiscountSystem discountSystem = new DiscountSystem();
-    private final DiscountService discountService = new DiscountService(discountSystem);
+    private final InventorySystem inventory = InventorySystem.getInstance();
+    private final DiscountService discountService = new DiscountService();
     private final AccountingSystem accounting = new AccountingSystem();
+    private final List<SaleObserver> observers = new CopyOnWriteArrayList<>();
     private Sale currentSale;
 
     /**
@@ -29,61 +29,72 @@ public class Controller {
      */
     public void startSale() {
         currentSale = new Sale(discountService);
+        // No need to push observers into Sale; we'll notify manually
     }
 
     /**
      * Registers one unit of the item with the given ID.
-     *
-     * @param id the item identifier
-     * @return the ItemDTO if found, otherwise null
+     * @throws DatabaseFailureException if inventory lookup fails
+     * @throws ItemNotFoundException if item ID is invalid
      */
-    public ItemDTO registerItem(String id) {
+    public ItemDTO registerItem(String id) 
+            throws DatabaseFailureException, ItemNotFoundException {
         ItemDTO itemInfo = inventory.findItem(id);
-        if (itemInfo == null) {
-            return null;
-        }
         currentSale.addItem(itemInfo);
         return itemInfo;
     }
 
     /**
-     * Applies discounts for a given customer.
-     *
-     * @param customerId the customer’s ID
-     * @return the total discount amount applied in SEK
+     * Sets the current customer ID for discount strategies.
+     */
+    public void setCustomerID(String customerId) {
+        if (currentSale != null) {
+            currentSale.setCustomerID(customerId);
+        }
+    }
+
+    /**
+     * Applies all configured discounts for the current sale.
+     * @return total discount applied
      */
     public double requestDiscount(String customerId) {
-        currentSale.applyFinalDiscounts(customerId);
+        setCustomerID(customerId);
+        currentSale.applyDiscounts();
         return currentSale.getDiscountApplied();
     }
 
     /**
-     * Returns a SaleDTO representing the current sale, for external systems.
-     *
-     * @return SaleDTO summarizing the sale
+     * Ends the sale and returns the total line including VAT formatted for display.
+     */
+    public String endSale() {
+        return FormatUtil.totalLine(currentSale.getRunningTotal());
+    }
+
+    /**
+     * Returns a SaleDTO representing the current sale.
      */
     public SaleDTO getSaleInfo() {
         return currentSale.toDTO();
     }
 
     /**
-     * Processes the payment, notifies external systems, and returns the receipt text.
-     *
-     * @param amountPaid the amount of cash provided by the customer
-     * @return the formatted receipt string
+     * Processes payment, records the sale, notifies observers, and returns the receipt.
      */
     public String pay(double amountPaid) {
         SaleDTO saleDTO = currentSale.toDTO();
         accounting.recordSale(saleDTO);
+
+        // Notify observers with final total after discounts
+        double finalTotal = saleDTO.getTotalAfterDiscount();
+        observers.forEach(obs -> obs.newSale(finalTotal));
+
         return Printer.format(currentSale, amountPaid);
     }
 
     /**
-     * Ends the sale and returns the total line including VAT formatted for display.
-     *
-     * @return formatted total line string
+     * Registers a new SaleObserver (e.g., TotalRevenueView/FileOutput).
      */
-    public String endSale() {
-        return FormatUtil.totalLine(currentSale.getRunningTotal());
+    public void addObserver(SaleObserver observer) {
+        observers.add(observer);
     }
 }

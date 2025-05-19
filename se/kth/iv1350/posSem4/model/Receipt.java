@@ -2,8 +2,8 @@ package se.kth.iv1350.posSem4.model;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import se.kth.iv1350.pos.integration.DTO.ItemDTO;
-import se.kth.iv1350.pos.integration.DTO.SaleDTO;
+import se.kth.iv1350.posSem4.integration.DTO.ItemDTO;
+import se.kth.iv1350.posSem4.integration.DTO.SaleDTO;
 
 /**
  * Represents a completed sale and its associated receipt data.

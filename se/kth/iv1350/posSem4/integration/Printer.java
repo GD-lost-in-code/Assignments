@@ -3,8 +3,8 @@ package se.kth.iv1350.posSem4.integration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import se.kth.iv1350.pos.model.Sale;
-import se.kth.iv1350.pos.util.FormatUtil;
+import se.kth.iv1350.posSem4.model.Sale;
+import se.kth.iv1350.posSem4.util.FormatUtil;
 
 public class Printer {
     private static final DateTimeFormatter TIMESTAMP_FORMAT =

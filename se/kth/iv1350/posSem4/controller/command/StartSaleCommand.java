@@ -1,6 +1,6 @@
 package se.kth.iv1350.posSem4.controller.command;
 
-import se.kth.iv1350.pos.controller.Controller;
+import se.kth.iv1350.posSem4.controller.Controller;
 
 public class StartSaleCommand implements Command{
     private final Controller controller;

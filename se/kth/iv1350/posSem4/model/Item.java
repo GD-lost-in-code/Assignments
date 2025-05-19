@@ -1,6 +1,6 @@
 package se.kth.iv1350.posSem4.model;
 
-import se.kth.iv1350.pos.integration.DTO.ItemDTO;
+import se.kth.iv1350.posSem4.integration.DTO.ItemDTO;
 
 /**
  * Represents an individual product with pricing and VAT information.

@@ -1,7 +1,7 @@
 package se.kth.iv1350.posSem4.main;
 
-import se.kth.iv1350.pos.controller.Controller;
-import se.kth.iv1350.pos.view.View;
+import se.kth.iv1350.posSem4.controller.Controller;
+import se.kth.iv1350.posSem4.view.View;
 
 /**
  * Application entry point.

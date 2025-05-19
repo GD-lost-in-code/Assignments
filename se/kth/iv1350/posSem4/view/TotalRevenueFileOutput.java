@@ -1,7 +1,6 @@
 package se.kth.iv1350.posSem4.view;
 
 import se.kth.iv1350.posSem4.controller.SaleObserver;
-import se.kth.iv1350.posSem4.view.LocalFileLogger;
 
 /**
  * Observer that logs total revenue to a file.

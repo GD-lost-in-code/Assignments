@@ -1,6 +1,6 @@
 package se.kth.iv1350.posSem4.controller.command;
 
-import se.kth.iv1350.pos.controller.Controller;
+import se.kth.iv1350.posSem4.controller.Controller;
 
 public class PayCommand implements Command{
     private final Controller controller;
