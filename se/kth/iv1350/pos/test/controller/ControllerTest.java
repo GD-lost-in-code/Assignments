@@ -3,6 +3,7 @@ package se.kth.iv1350.pos.test.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import se.kth.iv1350.pos.controller.Controller;
+import se.kth.iv1350.pos.integration.DTO.ItemDTO;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,23 +17,23 @@ class ControllerTest {
     }
 
     @Test
-    void registerInvalidItemReturnsError() {
-        String msg = ctrl.registerItem("BAD_ID");
-        assertTrue(msg.startsWith("Error:"), "Should return error message");
+    void registerInvalidItemReturnsNull() {
+        ItemDTO result = ctrl.registerItem("BAD_ID");
+        assertNull(result, "Should return null for invalid item");
     }
 
     @Test
-    void registerValidItemUpdatesTotal() {
-        String out = ctrl.registerItem("abc123");
-        assertTrue(out.contains("Price:"), "Should show price line");
-        assertTrue(out.contains("Total"), "Should show total line");
+    void registerValidItemReturnsItemDTO() {
+        ItemDTO result = ctrl.registerItem("abc123");
+        assertNotNull(result, "Valid item ID should return an ItemDTO");
+        assertEquals("abc123", result.getId(), "Item ID should match");
     }
 
     @Test
     void endSaleReflectsRunningTotal() {
         ctrl.registerItem("abc123");
         String totalLine = ctrl.endSale();
-        assertTrue(totalLine.contains("Total"));
+        assertTrue(totalLine.contains("Total"), "Should include total in end sale");
     }
 
     @Test
@@ -40,7 +41,7 @@ class ControllerTest {
         ctrl.registerItem("abc123");
         ctrl.endSale();
         String receipt = ctrl.pay(100.0);
-        assertTrue(receipt.contains("Begin receipt"));
-        assertTrue(receipt.contains("Change"));
+        assertTrue(receipt.contains("Begin receipt"), "Receipt should start correctly");
+        assertTrue(receipt.contains("Change"), "Receipt should include change line");
     }
 }
