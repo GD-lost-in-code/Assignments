@@ -1,3 +1,4 @@
 [TotalRevenueFileOutput] Cumulative revenue: 79.182 SEK
 [TotalRevenueFileOutput] Cumulative revenue: 79.182 SEK
 [TotalRevenueFileOutput] Cumulative revenue: 79.182 SEK
+[TotalRevenueFileOutput] Cumulative revenue: 79.182 SEK

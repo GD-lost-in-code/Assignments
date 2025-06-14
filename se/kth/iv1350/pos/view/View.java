@@ -2,6 +2,8 @@ package se.kth.iv1350.pos.view;
 
 import se.kth.iv1350.pos.controller.Controller;
 import se.kth.iv1350.pos.integration.DTO.ItemDTO;
+import se.kth.iv1350.pos.integration.Printer;
+import se.kth.iv1350.pos.model.Receipt;
 import se.kth.iv1350.pos.util.FormatUtil;
 
 /**
@@ -48,16 +50,17 @@ public class View {
 
         // 6. End sale (show total line)
         System.out.println("End sale :");
-        String totalLine = ctrl.endSale();
+        String totalLine = FormatUtil.totalLine(ctrl.endSale());
         System.out.println(totalLine);
         System.out.println();
 
         // 7. Pay and print full receipt
         double amountPaid = 100.00;
         System.out.printf("Customer pays: %.2f SEK%n%n", amountPaid);
-        String receipt = ctrl.pay(amountPaid);
-        System.out.println(receipt);
+        Receipt receipt = ctrl.pay(amountPaid);
+        System.out.println(Printer.format(receipt));
         System.out.println();
+
 
         // 8. Show change explicitly
         double change = amountPaid - 

@@ -67,23 +67,18 @@ public class Controller {
     }
 
     /**
-     * Processes the payment, notifies external systems, and returns the receipt text.
-     *
-     * @param amountPaid the amount of cash provided by the customer
-     * @return the formatted receipt string
+     * Completes the sale, records it externally, and returns a receipt.
+     * 
      */
-    public String pay(double amountPaid) {
+    public Receipt pay(double amountPaid) {
         SaleDTO saleDTO = currentSale.toDTO();
+        Receipt receipt = new Receipt(saleDTO, amountPaid);
         accounting.recordSale(saleDTO);
-        return Printer.format(currentSale, amountPaid);
+        return receipt;
     }
 
-    /**
-     * Ends the sale and returns the total line including VAT formatted for display.
-     *
-     * @return formatted total line string
-     */
-    public String endSale() {
-        return FormatUtil.totalLine(currentSale.getRunningTotal());
+
+    public double endSale() {
+        return currentSale.getRunningTotal();
     }
 }
