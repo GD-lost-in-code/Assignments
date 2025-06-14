@@ -13,6 +13,7 @@ import se.kth.iv1350.posSem4.integration.exception.DatabaseFailureException;
 import se.kth.iv1350.posSem4.integration.exception.ItemNotFoundException;
 import se.kth.iv1350.posSem4.model.Sale;
 import se.kth.iv1350.posSem4.util.FormatUtil;
+import se.kth.iv1350.posSem4.model.SaleObserver;
 
 /**
  * Coordinates the point-of-sale use case: scanning, ending sale, and payment.
@@ -30,6 +31,10 @@ public class Controller {
     public void startSale() {
         currentSale = new Sale(discountService);
         // No need to push observers into Sale; we'll notify manually
+        for (SaleObserver obs : registeredObservers) {
+            currentSale.addObserver(obs);
+        }
+
     }
 
     /**

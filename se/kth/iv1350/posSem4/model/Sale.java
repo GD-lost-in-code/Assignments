@@ -77,10 +77,20 @@ public class Sale {
             .mapToDouble(entry -> entry.getKey().getPrice() * entry.getValue() * entry.getKey().getVatRate()).sum();
     }
 
+    public void addObserver(SaleObserver observer) {
+        observers.add(observer);
+    }
+
+    private void notifyObservers() {
+        for (SaleObserver observer : observers) {
+            observer.newSale(runningTotal); // or use finalTotal if you prefer
+        }
+    }
 
     public void applyDiscounts() {
         finalDiscountTotal = discountService.calculateDiscount(this);
         runningTotal -= finalDiscountTotal;
+        notifyObservers();
     }
 
     /**
